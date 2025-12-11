@@ -42,14 +42,14 @@ function Invoke-WithRetry {
         [Parameter(Mandatory = $true)]
         [scriptblock]$ScriptBlock,
 
-        [Parameter(Mandatory = $false)]
-        [int]$MaxRetries = 3,
+        [Parameter(Mandatory = $true)]
+        [int]$MaxRetries,
 
-        [Parameter(Mandatory = $false)]
-        [int]$InitialDelaySeconds = 5,
+        [Parameter(Mandatory = $true)]
+        [int]$InitialDelaySeconds,
 
-        [Parameter(Mandatory = $false)]
-        [string]$OperationName = "Operation"
+        [Parameter(Mandatory = $true)]
+        [string]$OperationName
     )
 
     $attempt = 0
@@ -385,7 +385,7 @@ try {
 
     Invoke-WithRetry -ScriptBlock {
         Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $downloadPath -Headers $headers
-    } -MaxRetries 3 -InitialDelaySeconds 10 -OperationName "Download"
+    } -MaxRetries 10 -InitialDelaySeconds 10 -OperationName "Download"
 
     Write-Host "   • Downloaded to: $downloadPath"
 }
