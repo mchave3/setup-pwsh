@@ -23,6 +23,8 @@ steps:
 
   - name: Setup PowerShell
     uses: mchave3/setup-pwsh@v1
+    with:
+      github-token: ${{ github.token }}
 
   - name: Run PowerShell script
     shell: pwsh
@@ -38,6 +40,7 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: 'stable'
+      github-token: ${{ github.token }}
 ```
 
 ### Install Specific Version
@@ -48,6 +51,7 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: '7.4.6'
+      github-token: ${{ github.token }}
 ```
 
 ### Install Latest Preview
@@ -58,6 +62,7 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: 'preview'
+      github-token: ${{ github.token }}
 ```
 
 ### Specify Architecture
@@ -69,6 +74,7 @@ steps:
     with:
       version: 'stable'
       architecture: 'arm64'
+      github-token: ${{ github.token }}
 ```
 
 ### Matrix Testing
@@ -249,7 +255,7 @@ jobs:
 
 ### Rate Limiting
 
-To avoid GitHub API rate limiting, use the `github-token` input (recommended):
+To avoid GitHub API rate limiting, **always pass the `github-token`** input:
 
 ```yaml
 steps:
@@ -259,7 +265,7 @@ steps:
       github-token: ${{ github.token }}
 ```
 
-> 💡 **Tip**: `github.token` is automatically available in all workflows - no need to create a secret!
+> ⚠️ **Important**: Without a token, anonymous API requests are limited to 60/hour. With `github.token`, you get 5,000/hour.
 
 ### Version Not Found
 
