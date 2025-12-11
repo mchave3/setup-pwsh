@@ -27,6 +27,13 @@ inputs:
     required: false
     default: "auto"
 
+  github-token:
+    description: |
+      GitHub token for API authentication (increases rate limit).
+      Recommended: ${{ github.token }}
+    required: false
+    default: ""
+
 outputs:
   version:
     description: "The version of PowerShell that was installed"
@@ -45,6 +52,7 @@ runs:
       env:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_ARCHITECTURE: ${{ inputs.architecture }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         $ErrorActionPreference = 'Stop'
         & "${{ github.action_path }}/scripts/Install-PowerShell.ps1" `

@@ -104,6 +104,7 @@ jobs:
 |-------|-------------|----------|---------|
 | `version` | PowerShell version to install | No | `latest` |
 | `architecture` | Target architecture | No | `auto` |
+| `github-token` | GitHub token for API authentication (recommended) | No | `""` |
 
 ### Version Options
 
@@ -248,15 +249,17 @@ jobs:
 
 ### Rate Limiting
 
-If you encounter GitHub API rate limiting, add a `GITHUB_TOKEN` to your workflow:
+To avoid GitHub API rate limiting, use the `github-token` input (recommended):
 
 ```yaml
 steps:
   - name: Setup PowerShell
     uses: mchave3/setup-pwsh@v1
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      github-token: ${{ github.token }}
 ```
+
+> 💡 **Tip**: `github.token` is automatically available in all workflows - no need to create a secret!
 
 ### Version Not Found
 

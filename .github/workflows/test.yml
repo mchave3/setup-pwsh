@@ -25,6 +25,7 @@ jobs:
         uses: ./
         with:
           version: 'latest'
+          github-token: ${{ github.token }}
 
       - name: Verify installation
         shell: pwsh
@@ -54,6 +55,7 @@ jobs:
         uses: ./
         with:
           version: 'stable'
+          github-token: ${{ github.token }}
 
       - name: Verify installation is 7.4.x
         shell: pwsh
@@ -84,6 +86,7 @@ jobs:
         uses: ./
         with:
           version: 'preview'
+          github-token: ${{ github.token }}
 
       - name: Verify installation
         shell: pwsh
@@ -109,6 +112,7 @@ jobs:
         uses: ./
         with:
           version: ${{ matrix.version }}
+          github-token: ${{ github.token }}
 
       - name: Verify installation
         shell: pwsh
@@ -153,6 +157,7 @@ jobs:
         with:
           version: 'stable'
           architecture: ${{ matrix.arch }}
+          github-token: ${{ github.token }}
 
       - name: Verify installation
         shell: pwsh
