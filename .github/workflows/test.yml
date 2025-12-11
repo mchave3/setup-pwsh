@@ -1,0 +1,161 @@
+name: Test Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-latest:
+    name: Test Latest - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell (latest)
+        id: setup-pwsh
+        uses: ./
+        with:
+          version: 'latest'
+
+      - name: Verify installation
+        shell: pwsh
+        run: |
+          Write-Host "✅ PowerShell Version: $($PSVersionTable.PSVersion)"
+          Write-Host "✅ OS: $($PSVersionTable.OS)"
+          Write-Host "✅ Platform: $($PSVersionTable.Platform)"
+
+          # Verify outputs
+          Write-Host "✅ Installed version output: ${{ steps.setup-pwsh.outputs.version }}"
+          Write-Host "✅ Installation path output: ${{ steps.setup-pwsh.outputs.path }}"
+
+  test-stable-lts:
+    name: Test Stable/LTS - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell (stable/lts)
+        id: setup-pwsh
+        uses: ./
+        with:
+          version: 'stable'
+
+      - name: Verify installation is 7.4.x
+        shell: pwsh
+        run: |
+          $version = $PSVersionTable.PSVersion
+          Write-Host "✅ PowerShell LTS Version: $version"
+
+          if ($version.Major -ne 7 -or $version.Minor -ne 4) {
+            throw "Expected 7.4.x LTS version but got $version"
+          }
+
+          Write-Host "✅ Confirmed LTS version 7.4.x"
+
+  test-preview:
+    name: Test Preview - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell (preview)
+        id: setup-pwsh
+        uses: ./
+        with:
+          version: 'preview'
+
+      - name: Verify installation
+        shell: pwsh
+        run: |
+          Write-Host "✅ PowerShell Preview Version: $($PSVersionTable.PSVersion)"
+          Write-Host "✅ Installed version output: ${{ steps.setup-pwsh.outputs.version }}"
+
+  test-specific-version:
+    name: Test Specific Version - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        version: ['7.4.0', '7.3.0']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell ${{ matrix.version }}
+        id: setup-pwsh
+        uses: ./
+        with:
+          version: ${{ matrix.version }}
+
+      - name: Verify installation
+        shell: pwsh
+        run: |
+          $expectedVersion = "${{ matrix.version }}"
+          $installedVersion = $PSVersionTable.PSVersion.ToString()
+
+          Write-Host "Expected: $expectedVersion"
+          Write-Host "Installed: $installedVersion"
+
+          if ($installedVersion -notlike "$expectedVersion*") {
+            throw "Version mismatch! Expected $expectedVersion but got $installedVersion"
+          }
+
+          Write-Host "✅ Version verified successfully!"
+
+  test-architecture:
+    name: Test Architecture - ${{ matrix.os }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: x64
+          - os: windows-latest
+            arch: x64
+          - os: windows-latest
+            arch: x86
+          - os: macos-latest
+            arch: arm64
+          - os: macos-13
+            arch: x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PowerShell (${{ matrix.arch }})
+        id: setup-pwsh
+        uses: ./
+        with:
+          version: 'stable'
+          architecture: ${{ matrix.arch }}
+
+      - name: Verify installation
+        shell: pwsh
+        run: |
+          Write-Host "✅ PowerShell Version: $($PSVersionTable.PSVersion)"
+          Write-Host "✅ Architecture test passed for ${{ matrix.arch }}"
