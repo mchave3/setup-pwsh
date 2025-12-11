@@ -98,7 +98,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: ['7.4.0', '7.3.0']
+        version: ['7.4.13', '7.5.4']
 
     steps:
       - name: Checkout
@@ -140,7 +140,7 @@ jobs:
             arch: x86
           - os: macos-latest
             arch: arm64
-          - os: macos-13
+          - os: macos-15-intel
             arch: x64
 
     steps:
