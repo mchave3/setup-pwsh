@@ -164,3 +164,46 @@ jobs:
         run: |
           Write-Host "✅ PowerShell Version: $($PSVersionTable.PSVersion)"
           Write-Host "✅ Architecture test passed for ${{ matrix.arch }}"
+
+  summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [test-latest, test-stable-lts, test-preview, test-specific-version, test-architecture]
+
+    steps:
+      - name: Generate Summary Table
+        shell: pwsh
+        run: |
+          function Get-StatusEmoji {
+            param([string]$Status)
+            switch ($Status) {
+              'success'   { '✅ Passed' }
+              'failure'   { '❌ Failed' }
+              'cancelled' { '⚪ Cancelled' }
+              'skipped'   { '⏭️ Skipped' }
+              default     { '❓ Unknown' }
+            }
+          }
+
+          $summary = @"
+          ## 🧪 Setup-Pwsh Test Results
+
+          | Test | Status |
+          |------|--------|
+          | Latest Version | $(Get-StatusEmoji '${{ needs.test-latest.result }}') |
+          | Stable/LTS Version | $(Get-StatusEmoji '${{ needs.test-stable-lts.result }}') |
+          | Preview Version | $(Get-StatusEmoji '${{ needs.test-preview.result }}') |
+          | Specific Versions | $(Get-StatusEmoji '${{ needs.test-specific-version.result }}') |
+          | Architecture Tests | $(Get-StatusEmoji '${{ needs.test-architecture.result }}') |
+
+          ### 📋 Details
+
+          - **Workflow:** ``${{ github.workflow }}``
+          - **Run ID:** ``${{ github.run_id }}``
+          - **Triggered by:** ``${{ github.event_name }}``
+          - **Branch:** ``${{ github.ref_name }}``
+          - **Commit:** ``${{ github.sha }}``
+          "@
+
+          $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
