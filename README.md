@@ -23,8 +23,6 @@ steps:
 
   - name: Setup PowerShell
     uses: mchave3/setup-pwsh@v1
-    with:
-      github-token: ${{ github.token }}
 
   - name: Run PowerShell script
     shell: pwsh
@@ -40,7 +38,6 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: 'stable'
-      github-token: ${{ github.token }}
 ```
 
 ### Install Specific Version
@@ -51,7 +48,6 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: '7.4.6'
-      github-token: ${{ github.token }}
 ```
 
 ### Install Latest Preview
@@ -62,7 +58,6 @@ steps:
     uses: mchave3/setup-pwsh@v1
     with:
       version: 'preview'
-      github-token: ${{ github.token }}
 ```
 
 ### Specify Architecture
@@ -74,7 +69,6 @@ steps:
     with:
       version: 'stable'
       architecture: 'arm64'
-      github-token: ${{ github.token }}
 ```
 
 ### Matrix Testing
@@ -110,7 +104,7 @@ jobs:
 |-------|-------------|----------|---------|
 | `version` | PowerShell version to install | No | `latest` |
 | `architecture` | Target architecture | No | `auto` |
-| `github-token` | GitHub token for API authentication (recommended) | No | `""` |
+| `github-token` | GitHub token for API authentication (optional, recommended to avoid rate limits) | No | `""` |
 
 ### Version Options
 
@@ -166,18 +160,23 @@ steps:
 
 ## Supported Runners
 
-| Runner | Status |
-|--------|--------|
-| `ubuntu-latest` | ✅ Supported |
-| `ubuntu-22.04` | ✅ Supported |
-| `ubuntu-20.04` | ✅ Supported |
-| `windows-latest` | ✅ Supported |
-| `windows-2022` | ✅ Supported |
-| `windows-2019` | ✅ Supported |
-| `macos-latest` | ✅ Supported |
-| `macos-14` (ARM64) | ✅ Supported |
-| `macos-13` | ✅ Supported |
-| `self-hosted` | ✅ Supported |
+The following runners are actively tested in our CI/CD pipeline:
+
+| Runner | Status | Tested |
+|--------|--------|--------|
+| `ubuntu-latest` | ✅ Supported | ✅ |
+| `windows-latest` | ✅ Supported | ✅ |
+| `macos-latest` | ✅ Supported | ✅ |
+| `macos-15-intel` | ✅ Supported | ✅ |
+
+Other runners should work but are not actively tested:
+
+| Runner | Status | Tested |
+|--------|--------|--------|
+| `ubuntu-22.04`, `ubuntu-20.04` | ⚠️ Should work | ❌ |
+| `windows-2022`, `windows-2019` | ⚠️ Should work | ❌ |
+| `macos-14`, `macos-13` | ⚠️ Should work | ❌ |
+| `self-hosted` | ⚠️ Should work | ❌ |
 
 ## Examples
 
@@ -255,17 +254,18 @@ jobs:
 
 ### Rate Limiting
 
-To avoid GitHub API rate limiting, **always pass the `github-token`** input:
+The `github-token` input is **optional but recommended** to avoid GitHub API rate limiting:
 
 ```yaml
 steps:
   - name: Setup PowerShell
     uses: mchave3/setup-pwsh@v1
     with:
-      github-token: ${{ github.token }}
+      version: 'stable'
+      github-token: ${{ github.token }}  # Optional but recommended
 ```
 
-> ⚠️ **Important**: Without a token, anonymous API requests are limited to 60/hour. With `github.token`, you get 5,000/hour.
+> 💡 **Tip**: Without a token, anonymous API requests are limited to 60/hour. With `github.token`, you get 5,000/hour. The action will work without it, but you may hit rate limits in workflows that run frequently.
 
 ### Version Not Found
 
