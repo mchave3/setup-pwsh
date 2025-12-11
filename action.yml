@@ -1,5 +1,5 @@
 name: "Setup PowerShell Core (pwsh)"
-description: "Download and install any version of PowerShell Core (stable, preview, or specific version) on GitHub Actions runners (Windows, macOS, Linux)."
+description: "Download and install any version of PowerShell Core on GitHub Actions runners (Windows, macOS, Linux)"
 author: "mchave3"
 branding:
   icon: "terminal"
