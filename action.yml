@@ -30,7 +30,6 @@ inputs:
   github-token:
     description: |
       GitHub token for API authentication (increases rate limit).
-      Recommended: ${{ github.token }}
     required: false
     default: ""
 
