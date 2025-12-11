@@ -33,6 +33,47 @@ $ProgressPreference = 'SilentlyContinue'
 
 #region Helper Functions
 
+function Invoke-WithRetry {
+    <#
+    .SYNOPSIS
+        Executes a script block with retry logic and exponential backoff.
+    #>
+    param(
+        [Parameter(Mandatory = $true)]
+        [scriptblock]$ScriptBlock,
+
+        [Parameter(Mandatory = $false)]
+        [int]$MaxRetries = 3,
+
+        [Parameter(Mandatory = $false)]
+        [int]$InitialDelaySeconds = 5,
+
+        [Parameter(Mandatory = $false)]
+        [string]$OperationName = "Operation"
+    )
+
+    $attempt = 0
+    $lastError = $null
+
+    while ($attempt -lt $MaxRetries) {
+        $attempt++
+        try {
+            return & $ScriptBlock
+        }
+        catch {
+            $lastError = $_
+            if ($attempt -lt $MaxRetries) {
+                $delay = $InitialDelaySeconds * [math]::Pow(2, $attempt - 1)
+                Write-Host "   ⚠️  $OperationName failed (attempt $attempt/$MaxRetries): $($_.Exception.Message)"
+                Write-Host "   🔄 Retrying in $delay seconds..."
+                Start-Sleep -Seconds $delay
+            }
+        }
+    }
+
+    throw "Failed after $MaxRetries attempts: $lastError"
+}
+
 function Write-ActionOutput {
     param(
         [string]$Name,
@@ -342,7 +383,10 @@ try {
         "User-Agent" = "setup-pwsh-action"
     }
 
-    Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $downloadPath -Headers $headers
+    Invoke-WithRetry -ScriptBlock {
+        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $downloadPath -Headers $headers
+    } -MaxRetries 3 -InitialDelaySeconds 10 -OperationName "Download"
+
     Write-Host "   • Downloaded to: $downloadPath"
 }
 catch {
