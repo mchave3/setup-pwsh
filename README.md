@@ -22,7 +22,7 @@ steps:
   - uses: actions/checkout@v4
 
   - name: Setup PowerShell
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
 
   - name: Run PowerShell script
     shell: pwsh
@@ -35,7 +35,7 @@ steps:
 ```yaml
 steps:
   - name: Setup PowerShell LTS
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: 'stable'
 ```
@@ -45,7 +45,7 @@ steps:
 ```yaml
 steps:
   - name: Setup PowerShell 7.4.6
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: '7.4.6'
 ```
@@ -55,7 +55,7 @@ steps:
 ```yaml
 steps:
   - name: Setup PowerShell Preview
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: 'preview'
 ```
@@ -65,7 +65,7 @@ steps:
 ```yaml
 steps:
   - name: Setup PowerShell ARM64
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: 'stable'
       architecture: 'arm64'
@@ -87,7 +87,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup PowerShell
-        uses: mchave3/setup-pwsh@v1
+        uses: mchave3/setup-pwsh@v1.0.0
         with:
           version: ${{ matrix.pwsh-version }}
 
@@ -148,7 +148,7 @@ jobs:
 steps:
   - name: Setup PowerShell
     id: setup-pwsh
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: 'stable'
 
@@ -199,7 +199,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup PowerShell
-        uses: mchave3/setup-pwsh@v1
+        uses: mchave3/setup-pwsh@v1.0.0
         with:
           version: 'stable'
 
@@ -232,7 +232,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup PowerShell ${{ matrix.pwsh }}
-        uses: mchave3/setup-pwsh@v1
+        uses: mchave3/setup-pwsh@v1.0.0
         with:
           version: ${{ matrix.pwsh }}
 
@@ -259,7 +259,7 @@ The `github-token` input is **optional but recommended** to avoid GitHub API rat
 ```yaml
 steps:
   - name: Setup PowerShell
-    uses: mchave3/setup-pwsh@v1
+    uses: mchave3/setup-pwsh@v1.0.0
     with:
       version: 'stable'
       github-token: ${{ github.token }}  # Optional but recommended
